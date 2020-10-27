@@ -58,6 +58,24 @@ for subreddit_name in cycle(SUBREDDITS):
             post.num_comments, post.score, row[0]
         ])
         conn.commit()
+    
+    day_ago = time.time() - 86400
+    to_update = c.execute("SELECT * FROM posts WHERE timestamp < ? AND comments_day ISNULL", [day_ago]) 
+    for row in to_update.fetchall():
+        post = reddit.submission(id=row[0])
+        c.execute("UPDATE posts SET comments_day = ?, score_day = ? WHERE id = ?", [
+            post.num_comments, post.score, row[0]
+        ])
+        conn.commit()
+    
+    week_ago = time.time() - (86400 * 7)
+    to_update = c.execute("SELECT * FROM posts WHERE timestamp < ? AND comments_week ISNULL", [week_ago]) 
+    for row in to_update.fetchall():
+        post = reddit.submission(id=row[0])
+        c.execute("UPDATE posts SET comments_week = ?, score_week = ? WHERE id = ?", [
+            post.num_comments, post.score, row[0]
+        ])
+        conn.commit()
 
 
     time.sleep(5)
