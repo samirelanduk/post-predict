@@ -44,7 +44,7 @@ for subreddit_name in cycle(SUBREDDITS):
             c.execute("INSERT INTO posts VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", [
                 post.id, post.created_utc, subreddit_name, post.title,
                 post.is_self, post.selftext, subreddit.subscribers,
-                subreddit.active_user_count, post.num_comments, post.score,
+                int(subreddit.active_user_count), int(post.num_comments), post.score,
                 None, None, None, None, None, None
             ])
             conn.commit()

@@ -1,1 +1,4 @@
 praw
+jupyter
+pandas
+matplotlib

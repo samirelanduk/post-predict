@@ -23,18 +23,60 @@ def save_features(features, name):
 
 # Hour dataset
 rows = list(c.execute("SELECT * FROM posts WHERE NOT score_hour ISNULL;").fetchall())
-features = [create_features(row) for row in rows]
-save_features(features, "hour-data.csv")
+if rows:
+    features = [create_features(row) for row in rows]
+    save_features(features, "hour-data.csv")
 
 # Day dataset
 rows = list(c.execute("SELECT * FROM posts WHERE NOT score_day ISNULL;").fetchall())
-features = [create_features(row) for row in rows]
-save_features(features, "day-data.csv")
+if rows:
+    features = [create_features(row) for row in rows]
+    save_features(features, "day-data.csv")
 
 # Week dataset
 rows = list(c.execute("SELECT * FROM posts WHERE NOT score_week ISNULL;").fetchall())
-features = [create_features(row) for row in rows]
-save_features(features, "week-data.csv")
+if rows:
+    features = [create_features(row) for row in rows]
+    save_features(features, "week-data.csv")
+
+# subreddits
+subreddits = [s[0] for s in c.execute("SELECT DISTINCT subreddit FROM posts;").fetchall()]
+for subreddit in subreddits + ["all"]:
+    # Hour dataset
+    rows = list(c.execute(
+        "SELECT * FROM posts WHERE NOT score_hour ISNULL;"
+    ).fetchall()) if subreddit == "all" else list(c.execute(
+        "SELECT * FROM posts WHERE NOT score_hour ISNULL AND subreddit=?;",
+        [subreddit]
+    ).fetchall())
+    if rows:
+        features = [create_features(row) for row in rows]
+        save_features(features, subreddit + "-hour-data.csv")
+    
+    # Day dataset
+    rows = list(c.execute(
+        "SELECT * FROM posts WHERE NOT score_day ISNULL;"
+    ).fetchall()) if subreddit == "all" else list(c.execute(
+        "SELECT * FROM posts WHERE NOT score_day ISNULL AND subreddit=?;",
+        [subreddit]
+    ).fetchall())
+    if rows:
+        features = [create_features(row) for row in rows]
+        save_features(features, subreddit + "-day-data.csv")
+
+    # Week dataset
+    rows = list(c.execute(
+        "SELECT * FROM posts WHERE NOT score_week ISNULL;"
+    ).fetchall()) if subreddit == "all" else list(c.execute(
+        "SELECT * FROM posts WHERE NOT score_week ISNULL AND subreddit=?;",
+        [subreddit]
+    ).fetchall())
+    if rows:
+        features = [create_features(row) for row in rows]
+        save_features(features, subreddit + "-week-data.csv")
+
+
+
 
 
 
